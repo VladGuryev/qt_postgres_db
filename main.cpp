@@ -3,7 +3,6 @@
 #include <QtSql/QSqlError>
 #include <QtSql/QSqlQuery>
 #include <QDebug>
-#include <iostream>
 
 //https://habr.com/en/post/168601/
 //https://habr.com/en/post/128836/
@@ -14,29 +13,37 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-  QCoreApplication a(argc, argv);
-//  qDebug() << QSqlDatabase::drivers();
-
   QSqlDatabase db = QSqlDatabase::addDatabase("QPSQL");
   db.setHostName("localhost");
+  db.setPort(5432);
   db.setDatabaseName("test");
   db.setUserName("postgres");
-  db.setPassword("mypass");
+  db.setPassword("postgres");
   bool connected = db.open();
   if(connected){
-    qDebug() << "OK Successfull!" << endl;
+    qDebug() << "Successfull connection to DB" << endl;
   } else{
-    qDebug() << db.lastError().text();
-    return a.exec();
+    qDebug() << db.lastError().text() << endl;
   }
-  QSqlQuery query;
-  query.exec("SELECT id, name, salary FROM test WHERE salary>=1000");
+  QSqlQuery query(db), query2(db);
+  //DON'T call prepare() with no binding values
 
-  if (!query.isActive())
-     qDebug() <<
-         "Database Error" +
-          query.lastError().text() << endl;
+  QString lCSql = QString("SELECT table_name FROM information_schema.tables WHERE table_schema NOT IN ('information_schema','pg_catalog');");
 
+ // query.exec(lCSql);
 
-  return a.exec();
+  QString lCSql2 = QString("SELECT version();");
+  query2.exec(lCSql2);
+
+  QSqlError error = query.lastError();
+  if (error.type() == QSqlError::NoError) {
+      while(query2.next()) {
+       qDebug() << query2.value(0).toString();
+      }
+  } else {
+      qDebug() << error.text();
+  }
+
+  return 0;
+
 }
