@@ -8,6 +8,7 @@
 //https://habr.com/en/post/128836/
 //https://ru.opensuse.org/QT_%D0%B8_%D0%91%D0%B0%D0%B7%D1%8B_%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D1%85
 //https://habr.com/en/post/51650/
+//https://habr.com/en/post/128836/   очень неплохо описано
 
 //psql -d test -U postgres -h localhost -p 5433
 //conninfo
